@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center">
-    <p>rfrfrf</p>
+    <p>Phonebook Page</p>
     <img
       alt="Quasar logo"
       src="~assets/quasar-logo-vertical.svg"
@@ -13,6 +13,6 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'IndexPage',
+  name: 'PhonebookPage',
 });
 </script>
