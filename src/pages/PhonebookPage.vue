@@ -1,13 +1,7 @@
 <template>
-  <q-page class="flex flex-top">
-    <div class="q-pa-md">
+  <q-page class="q-pa-md">
 
-    <div>Direct store</div>
-    <!-- Read the state value directly -->
-    <div>{{ store.counter }}</div>
-    <!-- Use getter directly -->
-    <div>{{ store.doubleCount }}</div>
-
+    <div class="q-mb-md flex justify-center">
       <q-markup-table>
         <thead>
           <tr>
@@ -32,22 +26,38 @@
       </q-markup-table>
 
     </div>
+
+    <div class="flex justify-center">
+        <q-btn
+          @click="state.showAddContact = true"
+          class="glossy" rounded color="primary" label="Add Contact" />
+    </div>
+
+    <q-dialog v-model="state.showAddContact">
+      <add-contact @close="state.showAddContact = false" />
+    </q-dialog>
+
   </q-page>
 </template>
 
 <script setup>
-import { defineComponent } from 'vue';
+import { reactive } from 'vue';
 import { useContactStore } from 'stores/store-contacts';
 import { useQuasar } from 'quasar';
+import AddContact from 'components/Contacts/AddContact.vue';
 
 const store = useContactStore();
 
 const $q = useQuasar();
 
+const state = reactive({
+  showAddContact: true,
+});
+
 function promptToDelete(id) {
   $q.dialog({
     title: 'Confirm',
-    message: 'Would you like to turn on the wifi?',
+    message: 'Are you sure?',
     cancel: true,
     persistent: true,
   }).onOk(() => {
@@ -55,11 +65,4 @@ function promptToDelete(id) {
   });
 }
 
-</script>
-
-<script>
-
-export default defineComponent({
-  name: 'PhonebookPage',
-});
 </script>

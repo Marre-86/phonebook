@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { uid } from 'quasar';
 
 export const useContactStore = defineStore('counter', {
   state: () => ({
@@ -31,6 +32,15 @@ export const useContactStore = defineStore('counter', {
     },
     deleteContact(id) {
       this.contacts = this.contacts.filter((contact) => contact.id !== id);
+    },
+    addContact(contact) {
+      const newContact = {
+        id: uid(),
+        name: contact.value.name,
+        phone: contact.value.phone,
+        role: contact.value.role,
+      };
+      this.contacts.push(newContact);
     },
     // mutations can now become actions, instead of `state` as first argument use `this`
     updateUser(payload) {
