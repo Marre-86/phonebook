@@ -1,52 +1,35 @@
 <template>
       <q-card>
-        <q-card-section class="row">
-          <div class="text-h6">Add Contact</div>
-          <q-space />
-          <q-btn v-close-popup flat round dense icon="close" />
-        </q-card-section>
+
+        <Header>Add Contact</Header>
 
         <form @submit="submitForm">
-            <q-card-section class="q-pt-none">
-            <q-input
-                :rules="[val => !!val || 'Field is required']"
-                ref="nameInput"
-                outlined v-model="contactToSubmit.name" label="Name *" />
-            </q-card-section>
 
-            <q-card-section class="q-pt-none">
-                <q-input outlined
-                    :rules="[
-                        val => !!val || 'Field is required',
-                        val => validatePhoneNumber(val) || 'Invalid phone number'
-                    ]"
-                    ref="phoneInput"
-                    v-model="contactToSubmit.phone" label="Phone number *" />
-            </q-card-section>
+            <ContactName v-model:name="contactToSubmit.name"
+                ref="modalContactName" />
 
-            <q-card-section class="q-pt-none">
-                <q-input
-                    outlined v-model="contactToSubmit.role" label="Role" />
-            </q-card-section>
+            <ContactPhone v-model:phone="contactToSubmit.phone"
+                ref="modalContactPhone" />
 
-            <q-card-actions align="center">
-            <q-btn label="SAVE" color="primary" type="Submit" />
-            </q-card-actions>
+            <ContactRole v-model:role="contactToSubmit.role" />
+
+            <SubmitButton></SubmitButton>
+
         </form>
 
       </q-card>
-  </template>
+</template>
 
 <script setup>
 import { ref } from 'vue';
 import { useContactStore } from 'stores/store-contacts';
+import Header from 'components/Contacts/Shared/ModalHeader.vue';
+import ContactName from 'components/Contacts/Shared/ModalContactName.vue';
+import ContactPhone from 'components/Contacts/Shared/ModalContactPhone.vue';
+import ContactRole from 'components/Contacts/Shared/ModalContactRole.vue';
+import SubmitButton from 'components/Contacts/Shared/ModalButton.vue';
 
 const emit = defineEmits(['close']);
-
-const validatePhoneNumber = (value) => {
-  const phoneRegex = /^[\d()+\s-]+$/;
-  return phoneRegex.test(value);
-};
 
 const contactToSubmit = ref({
   name: '',
@@ -54,8 +37,8 @@ const contactToSubmit = ref({
   role: '',
 });
 
-const nameInput = ref(null);
-const phoneInput = ref(null);
+const modalContactName = ref(null);
+const modalContactPhone = ref(null);
 
 const store = useContactStore();
 
@@ -65,9 +48,10 @@ const submitContact = () => {
 };
 
 const submitForm = () => {
-  nameInput.value.validate();
-  phoneInput.value.validate();
-  if ((!nameInput.value.hasError) && (!phoneInput.value.hasError)) {
+  modalContactName.value.nameInput.validate();
+  modalContactPhone.value.phoneInput.validate();
+  // eslint-disable-next-line max-len
+  if ((!modalContactName.value.nameInput.hasError) && (!modalContactPhone.value.phoneInput.hasError)) {
     submitContact();
   }
 };
