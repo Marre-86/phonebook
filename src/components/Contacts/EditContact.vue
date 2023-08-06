@@ -1,7 +1,7 @@
 <template>
       <q-card style="width: 300px;">
 
-        <Header>Add Contact</Header>
+        <Header>Edit Contact</Header>
 
         <form @submit="submitForm">
 
@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useContactStore } from 'stores/store-contacts';
 import Header from 'components/Contacts/Shared/ModalHeader.vue';
 import ContactName from 'components/Contacts/Shared/ModalContactName.vue';
@@ -30,11 +30,18 @@ import ContactRole from 'components/Contacts/Shared/ModalContactRole.vue';
 import SubmitButton from 'components/Contacts/Shared/ModalButton.vue';
 
 const emit = defineEmits(['close']);
+const contact = defineProps(['contact']);
 
 const contactToSubmit = ref({
   name: '',
   phone: '',
   role: '',
+});
+
+onMounted(() => {
+  contactToSubmit.value.name = contact.contact.name;
+  contactToSubmit.value.phone = contact.contact.phone;
+  contactToSubmit.value.role = contact.contact.role;
 });
 
 const modalContactName = ref(null);
@@ -43,7 +50,7 @@ const modalContactPhone = ref(null);
 const store = useContactStore();
 
 const submitContact = () => {
-  store.addContact(contactToSubmit);
+  store.updateContact(contactToSubmit, contact.contact.id);
   emit('close');
 };
 

@@ -27,9 +27,6 @@ export const useContactStore = defineStore('counter', {
   },
 
   actions: {
-    increment() {
-      this.counter += 1;
-    },
     deleteContact(id) {
       this.contacts = this.contacts.filter((contact) => contact.id !== id);
     },
@@ -42,11 +39,9 @@ export const useContactStore = defineStore('counter', {
       };
       this.contacts.push(newContact);
     },
-    // mutations can now become actions, instead of `state` as first argument use `this`
-    updateUser(payload) {
-      this.firstName = payload.firstName;
-      this.lastName = payload.lastName;
-      this.userId = payload.userId;
+    updateContact(contact, id) {
+      const updatedContact = this.contacts.find((c) => c.id === id);
+      Object.assign(updatedContact, contact.value);
     },
   },
 });
