@@ -12,7 +12,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="contact in store.contacts" :key="contact.id">
+          <tr v-for="contact in contacts" :key="contact.id">
             <td class="text-left">{{ contact.name }}</td>
             <td class="text-right">{{ contact.phone }}</td>
             <td class="text-right">{{ contact.role }}</td>
@@ -39,25 +39,35 @@
     </div>
 
     <q-dialog v-model="state.showAddContact">
-      <add-contact @close="state.showAddContact = false" />
+      <add-contact @close="state.showAddContact = false"
+        @updateContacts="updateContacts" />
     </q-dialog>
 
     <q-dialog v-model="state.showEditContact">
       <edit-contact @close="state.showEditContact = false"
-        :contact="state.contact" />
+        :contact="state.contact"
+        @updateContacts="updateContacts" />
     </q-dialog>
 
   </q-page>
 </template>
 
 <script setup>
-import { reactive } from 'vue';
-import { useContactStore } from 'stores/store-contacts';
+import { reactive, ref, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
 import AddContact from 'components/Contacts/AddContact.vue';
-import EditContact from 'components/Contacts/EditContact.vue';
+import editContact from 'components/Contacts/EditContact.vue';
+import { getContacts, deleteContact } from 'src/services/api.js';
 
-const store = useContactStore();
+const contacts = ref([]);
+
+onMounted(async () => {
+  contacts.value = await getContacts();
+});
+
+const updateContacts = (newContacts) => {
+  contacts.value = newContacts;
+};
 
 const $q = useQuasar();
 
@@ -73,8 +83,9 @@ function promptToDelete(id) {
     message: 'Are you sure?',
     cancel: true,
     persistent: true,
-  }).onOk(() => {
-    store.deleteContact(id);
+  }).onOk(async () => {
+    await deleteContact(id);
+    contacts.value = await getContacts();
   });
 }
 

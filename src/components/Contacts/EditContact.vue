@@ -22,14 +22,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useContactStore } from 'stores/store-contacts';
 import Header from 'components/Contacts/Shared/ModalHeader.vue';
 import ContactName from 'components/Contacts/Shared/ModalContactName.vue';
 import ContactPhone from 'components/Contacts/Shared/ModalContactPhone.vue';
 import ContactRole from 'components/Contacts/Shared/ModalContactRole.vue';
 import SubmitButton from 'components/Contacts/Shared/ModalButton.vue';
+import { getContacts, updateContact } from 'src/services/api.js';
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'updateContacts']);
 const contact = defineProps(['contact']);
 
 const contactToSubmit = ref({
@@ -47,11 +47,15 @@ onMounted(() => {
 const modalContactName = ref(null);
 const modalContactPhone = ref(null);
 
-const store = useContactStore();
-
-const submitContact = () => {
-  store.updateContact(contactToSubmit, contact.contact.id);
-  emit('close');
+const submitContact = async () => {
+  await updateContact(contact.contact.id, contactToSubmit.value);
+  try {
+    const newContacts = await getContacts();
+    emit('updateContacts', newContacts);
+    emit('close');
+  } catch (error) {
+    console.error('Error updating contacts:', error);
+  }
 };
 
 const submitForm = () => {
